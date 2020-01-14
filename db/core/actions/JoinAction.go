@@ -6,16 +6,9 @@ import (
 )
 
 const (
-	EQUAL                 = 1
-	GREATER_THAN          = 2
-	LESSER_THAN           = 3
-	LESS_THAN_EQUAL_TO    = 4
-	GREATER_THAN_EQUAL_TO = 5
-	NOT_EQUAL             = 6
-
-	AND = 7
-	OR  = 8
-	NOT = 9
+	AND = iota
+	OR
+	NOT
 )
 
 type JoinAction struct {
@@ -48,7 +41,7 @@ func CreateJoinAction(leftDataObject *model.DataObject, rightDataObject *model.D
 	action.rightDataObject = rightDataObject
 	action.filterConditions = filterConditions
 	action.filterType = filterType
-	action.queryType = Select
+	action.queryType = Join
 	action.outputTableName = outputTableName
 	return action
 }
@@ -140,7 +133,7 @@ func runAllObjects(leftObj *model.DataObject,
 	ret_map := make(map[int][]int)
 	for li, _ := range leftObj.ObjectList {
 		for ri, _ := range rightObj.ObjectList {
-			if checkCondition(leftObj.ObjectList[li][leftIndex], rightObj.ObjectList[ri][rightIndex], condition.filterComparisionExpression) {
+			if utils.CheckCondition(leftObj.ObjectList[li][leftIndex], rightObj.ObjectList[ri][rightIndex], condition.filterComparisionExpression) {
 				if _, ok := ret_map[li]; ok {
 					ret_map[li] = []int{}
 				}
@@ -161,7 +154,7 @@ func runSelectObjects(leftObj *model.DataObject,
 
 	for li, rlist := range it_map {
 		for _, ri := range rlist {
-			if checkCondition(leftObj.ObjectList[li][leftIndex], rightObj.ObjectList[ri][rightIndex], condition.filterComparisionExpression) {
+			if utils.CheckCondition(leftObj.ObjectList[li][leftIndex], rightObj.ObjectList[ri][rightIndex], condition.filterComparisionExpression) {
 				if _, ok := ret_map[li]; !ok {
 					ret_map[li] = []int{}
 				}
@@ -170,23 +163,4 @@ func runSelectObjects(leftObj *model.DataObject,
 		}
 	}
 	ch <- ret_map
-}
-
-func checkCondition(leftVal string, rightVal string, filterComparisionExpression int) bool {
-	switch filterComparisionExpression {
-	case EQUAL:
-		return leftVal == rightVal
-	case GREATER_THAN:
-		return leftVal > rightVal
-	case GREATER_THAN_EQUAL_TO:
-		return leftVal >= rightVal
-	case LESSER_THAN:
-		return leftVal < rightVal
-	case LESS_THAN_EQUAL_TO:
-		return leftVal <= rightVal
-	case NOT_EQUAL:
-		return leftVal != rightVal
-	default:
-		return false
-	}
 }

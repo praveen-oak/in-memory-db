@@ -4,6 +4,7 @@ import (
 	"github.com/praveen-oak/db/model"
 )
 
+//constants
 const (
 	Select     = 1
 	Project    = 2
@@ -20,6 +21,7 @@ const (
 	Concat     = 13
 )
 
+//Action type
 type Action interface {
 	GetQuerytype() string
 	RunAction(dataObject model.DataObject) model.DataObject
