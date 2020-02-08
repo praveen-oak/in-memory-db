@@ -38,4 +38,12 @@ func main() {
 
 	res := selectAction.RunAction()
 	fmt.Println(res.ObjectList)
+
+	indexAction := core.CreateHashIndexAction(sales1, "index", "itemid")
+	index := indexAction.RunAction()
+
+	for key, value := range index {
+		fmt.Println(key, len(value))
+	}
+	// fmt.Println(index)
 }
